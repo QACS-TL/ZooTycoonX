@@ -6,6 +6,7 @@
 
         static void Main(string[] args)
         {
+            //Variable Fun
             int count = 0;
             // csv Name, Type, Color, Age
             string animal1 = "Leo,Lion,Brown,4";
