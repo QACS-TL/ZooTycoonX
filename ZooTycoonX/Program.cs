@@ -2,16 +2,6 @@
 {
     internal class Program
     {
-        
-        static void Main(string[] args)
-        {
-            List<string> animals = new List<string>();
-            //Variable Fun
-            LoadAnimals(animals);
-            animals.Add(GenerateNewAnimal());
-            animals.Add(GenerateNewAnimal());
-            PrintDetails(animals);
-        }
 
         private static void PrintDetails(List<string> ani)
         {
@@ -43,6 +33,47 @@
             //animals.AddRange(name, type, colour,limbCount);
             string newAnimal = $"{name},{type},{colour},{limbCount}";
             return newAnimal;
+        }
+
+        public static void PrintMenu()
+        {
+            Console.WriteLine("1. Add Animal");
+            Console.WriteLine("2. View Animals");
+            Console.WriteLine("3. Exit");
+        }
+
+        public static void MainMenu()
+        {
+            List<string> animals = new List<string>();
+            LoadAnimals(animals);
+
+            while (true)
+            {
+                PrintMenu();
+                Console.WriteLine("Please select an option: ");
+                string choice = Console.ReadLine();
+                switch(choice)
+                {
+                    case "1":
+                        animals.Add(GenerateNewAnimal());
+                        break;
+                    case "2":
+                        PrintDetails(animals);
+                        break;
+                    case "3":
+                        Console.WriteLine("Exiting the program. Goodbye!");
+                        return;
+                    default:
+                        Console.WriteLine("Invalid option. Please try again.");
+                        break;
+                }
+            }
+
+        }
+
+        static void Main(string[] args)
+        {
+            MainMenu();
         }
     }
 }
