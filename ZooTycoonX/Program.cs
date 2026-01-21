@@ -1,36 +1,22 @@
 ﻿
 using System.Drawing;
 using System.Globalization;
+using ZooTycoonXLibrary;
+
 
 namespace ZooTycoonX
 {
-    internal class Program
+    public class Program
     {
-        private static HashSet<string> validAnimalTypes = new HashSet<string>
-        {
-            "DOG",
-            "CAT",
-            "BIRD",
-            "MONKEY",
-            "UNKNOWN"
-        };
 
-        private static HashSet<string> validAnimalColours = new HashSet<string>
-        {
-            "BLACK",
-            "WHITE",
-            "BLACK AND WHITE",
-            "GREY",
-            "PINK"
-        };
 
-        //private static void PrintDetails(List<Dictionary<string, string>> animals)
+        //private static void PrintDetails(List<Animal> animals)
         //{
         //    Console.WriteLine(string.Join("\n", animals));
         //    Console.WriteLine($"Total animals in the zoo: {animals.Count}");
         //}
 
-        private static void PrintDetails(List<Dictionary<string, string>> animals)
+        public static void PrintDetails(List<Animal> animals)
         {
             //Console.WriteLine($"You have {animals.Count} animals in your zoo.");
 
@@ -45,54 +31,33 @@ namespace ZooTycoonX
             //    Console.WriteLine($"{name}, {type}, {colour}, {limbs} ");
 
             //}
-
             for (int i = 0; i < animals.Count; i++)
             {
-                Console.WriteLine($"{i + 1}) Name: {animals[i]["Name"]}, Type: {animals[i]["Type"]}, Colour: {animals[i]["Colour"]}, LimbCount: {animals[i]["LimbCount"]}");
+                Console.WriteLine($"{i + 1}) Name: {animals[i].Name}, Type: {animals[i].Type}, Colour: {animals[i].Colour}, LimbCount: {animals[i].LimbCount}");
             }
 
         }
 
-        private static List<Dictionary<string, string>> LoadAnimals(List<Dictionary<string, string>> animals)
+        public static List<Animal> LoadAnimals(List<Animal> animals)
         {
-            animals = new List<Dictionary<string, string>>();
+            animals = new List<Animal>();
 
-            animals.Add(new Dictionary<string, string>
+            animals.Add(new Animal()
             {
-                {"Name", "Leo"},
-                {"Type", "Lion"},
-                {"Colour", "Brown"},
-                {"LimbCount", "4"}
+                Name= "Leo",
+                Type = "Lion",
+                Colour = "Brown",
+                LimbCount = 4
             });
 
-            animals.Add(new Dictionary<string, string>
-            {
-                {"Name", "Molly"},
-                {"Type", "Monkey"},
-                {"Colour", "Grey"},
-                {"LimbCount", "5"}
-            });
+            animals.Add(new Animal( "Molly", "Monkey", "Grey",5));
+            animals.Add(new Animal("Zara", "Zebra", "Black and White", 3));
+            animals.Add(new Animal("Ellie", "Elephant", "Grey", 10));
 
-            animals.Add(new Dictionary<string, string>
-            {
-                {"Name", "Zara"},
-                {"Type", "Zebra"},
-                {"Colour", "Black and White"},
-                {"LimbCount", "3"}
-            });
-
-            animals.Add(new Dictionary<string, string>
-            {
-                {"Name", "Ellie"},
-                {"Type", "Elephant"},
-                {"Colour", "Grey"},
-                {"LimbCount", "10"}
-            });
             return animals;
-
         }
 
-        private static void AddAnimal(List<Dictionary<string, string>> animals)
+        private static void AddAnimal(List<Animal> animals)
         {
             Console.WriteLine("Add a new animal.");
 
@@ -101,13 +66,7 @@ namespace ZooTycoonX
             string colour = GetAndValidateAttributeForAdding("Colour").ToUpper();
             string limbCount = GetAndValidateAttributeForAdding("LimbCount");
 
-            animals.Add(new Dictionary<string, string>
-            {
-                {"Name", name},
-                {"Type", type},
-                {"Colour", colour},
-                {"LimbCount", limbCount.ToString()}
-            });
+            animals.Add(new Animal( name, type, colour, int.Parse(limbCount)));
         }
 
         private static bool AttributeChecker(string attribute, string value)
@@ -117,9 +76,9 @@ namespace ZooTycoonX
                 case "Name":
                     return value.Length < 2;
                 case "Type":
-                    return !validAnimalTypes.Contains(value.ToUpper());
+                    return !Utilities.ValidAnimalTypes.Contains(value.ToUpper());
                 case "Colour":
-                    return !validAnimalColours.Contains(value.ToUpper());
+                    return !Utilities.ValidAnimalColours.Contains(value.ToUpper());
                 case "LimbCount":
                     bool parsed = int.TryParse(value, out int limbCount);
                     return !parsed || limbCount < 0;
@@ -128,7 +87,7 @@ namespace ZooTycoonX
             }
         }
 
-        private static string GetAndValidateAttributeForAdding(string attribute)
+        public static string GetAndValidateAttributeForAdding(string attribute)
         {
             Console.WriteLine($"{attribute}: ");
             string value = Console.ReadLine()?.Trim() ?? string.Empty;
@@ -171,7 +130,7 @@ namespace ZooTycoonX
             return null;
         }
 
-        public static (Dictionary<string, string>? selected, bool Quit) AnimalSelector(List<Dictionary<string, string>> animals, string messageMode, bool quitFlag)
+        public static (Animal? selected, bool Quit) AnimalSelector(List<Animal> animals, string messageMode, bool quitFlag)
         {
             var title = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(messageMode ?? string.Empty);
             Console.WriteLine($"{title} animals");
@@ -216,7 +175,7 @@ namespace ZooTycoonX
             return value;
         }
 
-        public static void EditAnimal(List<Dictionary<string, string>> animals)
+        public static void EditAnimal(List<Animal> animals)
         {
             string messageMode = "edit";
             bool quitFlag = false;
@@ -225,16 +184,16 @@ namespace ZooTycoonX
             if (qf || ani == null)
                 return;
 
-            ani["Name"] = GetAndValidateAttributeForEditing("Name", ani["Name"]);
-            ani["Type"] = GetAndValidateAttributeForEditing("Type", ani["Type"]).ToUpper();
-            ani["Colour"] = GetAndValidateAttributeForEditing("Colour", ani["Colour"]).ToUpper();
-            ani["LimbCount"] = GetAndValidateAttributeForEditing("LimbCount", ani["LimbCount"]);
+            ani.Name = GetAndValidateAttributeForEditing("Name", ani.Name);
+            ani.Type = GetAndValidateAttributeForEditing("Type", ani.Type).ToUpper();
+            ani.Colour = GetAndValidateAttributeForEditing("Colour", ani.Colour).ToUpper();
+            ani.LimbCount = int.Parse(GetAndValidateAttributeForEditing("LimbCount", ani.LimbCount.ToString()));
 
             //SaveAnimals(animals);
 
         }
 
-        public static void RemoveAnimal(List<Dictionary<string, string>> animals)
+        public static void RemoveAnimal(List<Animal> animals)
         {
             string messageMode = "remove";
             bool quitFlag = false;
@@ -245,7 +204,7 @@ namespace ZooTycoonX
 
             animals.Remove(ani);
             //SaveAnimals(animals);
-            Console.WriteLine($"Removed {ani["Name"]}");
+            Console.WriteLine($"Removed {ani.Name}");
         }
 
         public static void PrintMenu()
@@ -259,7 +218,7 @@ namespace ZooTycoonX
 
         public static void MainMenu()
         {
-            List<Dictionary<string, string>> animals = null;
+            List<Animal> animals = null;
             animals = LoadAnimals(animals);
 
             while (true)
@@ -295,6 +254,29 @@ namespace ZooTycoonX
         static void Main(string[] args)
         {
             MainMenu();
+
+            //Animal myAnimal = new Animal("Fido", "Dog", "Green", 4);
+            ////myAnimal.name = "Fido";
+            ////myAnimal.type = "Dog";
+            ////myAnimal.colour = "Black";
+            ////myAnimal.limbCount = 4;
+
+            //Animal myAnimal2 = new Animal();
+            ////myAnimal2.Name = "Fifi";
+            ////myAnimal2.type = "Cat";
+            ////myAnimal2.colour = "White";
+            ////myAnimal2.limbCount = 5;
+
+            //myAnimal2.LimbCount = -1;
+            //Console.WriteLine(myAnimal2.LimbCount);
+            ////myAnimal2.SetLimbCount(-1);
+            ////Console.WriteLine(myAnimal2.GetLimbCount());
+
+            //Animal myAnimal3 = new Animal { Name = "", Type = "Camel", Colour = "Green", LimbCount=-10};
+
+            //Console.WriteLine(myAnimal.Eat("Bone"));
+            //Console.WriteLine(myAnimal2.Eat("Fish"));
+            //Console.WriteLine(myAnimal3.Eat("Bananas"));
         }
     }
 }
