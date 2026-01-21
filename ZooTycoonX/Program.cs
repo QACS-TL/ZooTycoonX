@@ -1,28 +1,14 @@
 ﻿
 using System.Drawing;
 using System.Globalization;
+using ZooTycoonXLibrary;
+
 
 namespace ZooTycoonX
 {
     internal class Program
     {
-        private static HashSet<string> validAnimalTypes = new HashSet<string>
-        {
-            "DOG",
-            "CAT",
-            "BIRD",
-            "MONKEY",
-            "UNKNOWN"
-        };
 
-        private static HashSet<string> validAnimalColours = new HashSet<string>
-        {
-            "BLACK",
-            "WHITE",
-            "BLACK AND WHITE",
-            "GREY",
-            "PINK"
-        };
 
         //private static void PrintDetails(List<Dictionary<string, string>> animals)
         //{
@@ -45,7 +31,6 @@ namespace ZooTycoonX
             //    Console.WriteLine($"{name}, {type}, {colour}, {limbs} ");
 
             //}
-
             for (int i = 0; i < animals.Count; i++)
             {
                 Console.WriteLine($"{i + 1}) Name: {animals[i]["Name"]}, Type: {animals[i]["Type"]}, Colour: {animals[i]["Colour"]}, LimbCount: {animals[i]["LimbCount"]}");
@@ -117,9 +102,9 @@ namespace ZooTycoonX
                 case "Name":
                     return value.Length < 2;
                 case "Type":
-                    return !validAnimalTypes.Contains(value.ToUpper());
+                    return !Utilities.ValidAnimalTypes.Contains(value.ToUpper());
                 case "Colour":
-                    return !validAnimalColours.Contains(value.ToUpper());
+                    return !Utilities.ValidAnimalColours.Contains(value.ToUpper());
                 case "LimbCount":
                     bool parsed = int.TryParse(value, out int limbCount);
                     return !parsed || limbCount < 0;
@@ -294,7 +279,30 @@ namespace ZooTycoonX
 
         static void Main(string[] args)
         {
-            MainMenu();
+            //MainMenu();
+
+            Animal myAnimal = new Animal("Fido", "Dog", "Green", 4);
+            //myAnimal.name = "Fido";
+            //myAnimal.type = "Dog";
+            //myAnimal.colour = "Black";
+            //myAnimal.limbCount = 4;
+
+            Animal myAnimal2 = new Animal();
+            //myAnimal2.Name = "Fifi";
+            //myAnimal2.type = "Cat";
+            //myAnimal2.colour = "White";
+            //myAnimal2.limbCount = 5;
+
+            myAnimal2.LimbCount = -1;
+            Console.WriteLine(myAnimal2.LimbCount);
+            //myAnimal2.SetLimbCount(-1);
+            //Console.WriteLine(myAnimal2.GetLimbCount());
+
+            Animal myAnimal3 = new Animal { Name = "", Type = "Camel", Colour = "Green", LimbCount=-10};
+
+            Console.WriteLine(myAnimal.Eat("Bone"));
+            Console.WriteLine(myAnimal2.Eat("Fish"));
+            Console.WriteLine(myAnimal3.Eat("Bananas"));
         }
     }
 }
