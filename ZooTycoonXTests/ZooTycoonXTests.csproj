@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ZooTycoonXLibrary\ZooTycoonXLibrary.csproj" />
+    <ProjectReference Include="..\ZooTycoonX\ZooTycoonX.csproj" />
   </ItemGroup>
 
   <ItemGroup>
