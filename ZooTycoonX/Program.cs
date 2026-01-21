@@ -48,7 +48,7 @@ namespace ZooTycoonX
 
             for (int i = 0; i < animals.Count; i++)
             {
-                Console.WriteLine($"{i + 1}) Name: {animals[i]["Name"]}, Colour: {animals[i]["Colour"]}, LimbCount: {animals[i]["LimbCount"]}, Type: {animals[i]["Type"]}");
+                Console.WriteLine($"{i + 1}) Name: {animals[i]["Name"]}, Type: {animals[i]["Type"]}, Colour: {animals[i]["Colour"]}, LimbCount: {animals[i]["LimbCount"]}");
             }
 
         }
@@ -195,11 +195,66 @@ namespace ZooTycoonX
         }
 
 
+        private static string GetAndValidateAttributeForEditing(string attribute, string currentValue)
+        {
+            Console.WriteLine($"{attribute} [{currentValue}]: ");
+            string value = Console.ReadLine()?.Trim() ?? string.Empty;
+
+            if (string.IsNullOrEmpty(value))
+                return currentValue;
+
+            while (AttributeChecker(attribute, value))
+            {
+                Console.WriteLine($"Invalid {attribute}, please try again");
+                Console.WriteLine($"{attribute} [{currentValue}]: ");
+                value = Console.ReadLine()?.Trim() ?? string.Empty;
+
+                if (string.IsNullOrEmpty(value))
+                    return currentValue;
+            }
+
+            return value;
+        }
+
+        public static void EditAnimal(List<Dictionary<string, string>> animals)
+        {
+            string messageMode = "edit";
+            bool quitFlag = false;
+
+            var (ani, qf) = AnimalSelector(animals, messageMode, quitFlag);
+            if (qf || ani == null)
+                return;
+
+            ani["Name"] = GetAndValidateAttributeForEditing("Name", ani["Name"]);
+            ani["Type"] = GetAndValidateAttributeForEditing("Type", ani["Type"]).ToUpper();
+            ani["Colour"] = GetAndValidateAttributeForEditing("Colour", ani["Colour"]).ToUpper();
+            ani["LimbCount"] = GetAndValidateAttributeForEditing("LimbCount", ani["LimbCount"]);
+
+            //SaveAnimals(animals);
+
+        }
+
+        public static void RemoveAnimal(List<Dictionary<string, string>> animals)
+        {
+            string messageMode = "remove";
+            bool quitFlag = false;
+
+            var (ani, qf) = AnimalSelector(animals, messageMode, quitFlag);
+            if (qf || ani == null)
+                return;
+
+            animals.Remove(ani);
+            //SaveAnimals(animals);
+            Console.WriteLine($"Removed {ani["Name"]}");
+        }
+
         public static void PrintMenu()
         {
             Console.WriteLine("1. Add Animal");
             Console.WriteLine("2. View Animals");
-            Console.WriteLine("3. Exit");
+            Console.WriteLine("3. Edit Animal");
+            Console.WriteLine("4. Remove Animal");
+            Console.WriteLine("5. Exit");
         }
 
         public static void MainMenu()
@@ -221,6 +276,12 @@ namespace ZooTycoonX
                         PrintDetails(animals);
                         break;
                     case "3":
+                        EditAnimal(animals);
+                        break;
+                    case "4":
+                        RemoveAnimal(animals);
+                        break;
+                    case "5":
                         Console.WriteLine("Exiting the program. Goodbye!");
                         return;
                     default:
